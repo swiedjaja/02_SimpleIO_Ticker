@@ -14,16 +14,21 @@ void OnTimer1Sec()
   Serial.printf("Hello World %d\n", nCount);
   digitalWrite(arLed[nCount%3], LED_ON);
   digitalWrite(LED_BUILTIN, LED_BUILTIN_ON);
+#if defined(ESP32)    
+  delay(100);
+  digitalWrite(arLed[nCount%3], LED_OFF);
+  digitalWrite(LED_BUILTIN, LED_BUILTIN_OFF);
+  nCount++;
+#endif  
+#ifdef defined(ESP8266)
   // avoid call delay in ESP8266, nyala led akan redup
-  // delay(100);
-  // digitalWrite(arLed[nCount%3], LED_OFF);
-  // digitalWrite(LED_BUILTIN, LED_BUILTIN_OFF);
-  // nCount++;
+  // this better solution for ESP8266 and ESP32
   ledOff.once_ms(100, [](){
     digitalWrite(arLed[nCount%3], LED_OFF);
     digitalWrite(LED_BUILTIN, LED_BUILTIN_OFF);
     nCount++;
   });
+#endif  
 }
 
 void setup() {
